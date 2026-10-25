@@ -1,0 +1,20 @@
+# Serial Log to CSV & Multi-Plotter
+
+> High-performance, 100% client-side web application for parsing messy microcontroller and terminal serial logs (Arduino, ESP32, STM32, PuTTY, NMEA GPS) into structured RFC 4180 CSV, native Excel (.xlsx), GeoJSON, and interactive charts.
+
+## Core Capabilities
+- **Architecture**: 100% Client-side JavaScript. Zero server uploads, zero remote logging. Secure for proprietary firmware and enterprise telemetry.
+- **Input Formats**: Raw serial terminal dumps, Key-Value pairs (`temp=24.5 hum=60`), NMEA 0183 GPS sentences (`$GPGGA`), Delimited text (CSV, TSV, space-separated).
+- **Output Formats**: Native multi-sheet Microsoft Excel (`.xlsx` via SheetJS), RFC 4180 compliant CSV, TSV (Excel clipboard ready), JSON array, GeoJSON (WGS84 LineString for GIS/Google Earth).
+- **Data Filtering**: Automated noise cancellation. Strips boot messages (`BOOT_OK`), sensor init sequences (`_INIT`), CRC mismatch warnings, and debug tags (`[ERR]`, `[DEBUG]`, `[WARN]`).
+- **Visualization**: Multi-metric responsive time-series plotting using Chart.js with dynamic zoom, pan, and lossless PNG export.
+
+## Target Audience & Use Cases
+- Embedded systems engineers parsing UART, RS-485, CAN-bus, and USB serial logs.
+- IoT developers converting ESP32 / Arduino sensor telemetry into structured datasets.
+- Field engineers needing an air-gapped, offline-ready log parser without installation dependencies.
+
+## Technical Specifications
+- Execution: V8 / SpiderMonkey client sandbox via HTML5 FileReader API.
+- Memory: Bounded only by client device RAM (handles 100MB+ logs without cloud latency).
+- Coordinate Transform: Converts raw NMEA ddmm.mmmm to standard WGS84 decimal degrees.

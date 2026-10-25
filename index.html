@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serial Log to CSV & Excel Converter | Client-Side Embedded Data Tool</title>
+  <meta name="description" content="Convert raw Arduino, ESP32, and sensor serial logs into clean Excel spreadsheets (.xlsx), CSV files, and interactive telemetry charts. 100% private, client-side.">
+  <meta name="keywords" content="serial log to excel, arduino serial to csv, esp32 telemetry graph, putty log to csv, client side log parser, rfc 4180 csv export">
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://logtocsv.com/">
+  <meta property="og:title" content="Serial Log to CSV & Excel Converter">
+  <meta property="og:description" content="Convert raw terminal logs into clean Excel sheets and interactive charts directly in your browser.">
+  <meta property="og:type" content="website">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Serial Log to CSV & Excel Converter",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All (Web Browser)",
+        "browserRequirements": "Requires JavaScript. Runs 100% client-side with zero server transmission.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Zero-server upload client-side log processing",
+          "Automatic timestamp and sensor key-value extraction",
+          "Native Microsoft Excel (.xlsx) multi-sheet generation",
+          "RFC 4180 compliant CSV export",
+          "Interactive multi-metric telemetry charting with zoom and pan"
+        ],
+        "description": "Fast, private client-side converter transforming serial terminal logs into Excel sheets and charts."
+      },
+      {
+        "@type": "HowTo",
+        "name": "How to Convert Serial Logs to Excel Online",
+        "description": "Step-by-step guide to extract structured sensor telemetry from serial terminal dumps.",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "name": "Upload Log",
+            "text": "Select or drag and drop your .log, .txt, or CSV file into the converter."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Automatic Processing",
+            "text": "The client-side engine strips debug noise and extracts telemetry columns instantly."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Download Excel or CSV",
+            "text": "Click Download Excel (.xlsx) or Download CSV to save your structured dataset."
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is my hardware telemetry uploaded to any cloud server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The entire decoding and conversion process runs locally in your browser memory. No data is transmitted across the internet."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I convert multiple files at once?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Multiple files are parsed together and bundled into a multi-sheet Excel workbook."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <nav class="navbar">
+    <div class="logo">
+      <svg class="nav-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+      <strong>SerialLog</strong>Converter
+    </div>
+    <div class="nav-right">
+      <span class="badge">
+        <svg class="ui-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        100% Client-Side Private
+      </span>
+      <button class="ghost-btn" id="btnOpenOptions">
+        <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <h1 class="hero-title">Serial Log to Excel & CSV</h1>
+    <p class="hero-subtitle">Convert raw Arduino, ESP32, and terminal logs into structured Excel sheets and interactive charts.</p>
+
+    <div class="upload-card" id="dropZone">
+      <input type="file" id="filePicker" accept=".log,.txt,.csv,.data" multiple style="display: none;">
+      
+      <button class="primary-action-btn" id="btnSelectFiles">
+        <svg class="ui-icon lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Select Serial Log files
+      </button>
+
+      <p class="drop-label">or drag and drop logs here</p>
+
+      <div class="quick-samples">
+        <span>Try sample:</span>
+        <button class="link-btn" id="btnSampleKV">ESP32 Telemetry</button>
+        <span class="dot">•</span>
+        <button class="link-btn" id="btnSampleGPS">NMEA GPS</button>
+        <span class="dot">•</span>
+        <button class="link-btn" id="btnTogglePaste">Paste Text Directly</button>
+      </div>
+
+      <div class="file-status" id="fileStatus" style="display: none;">
+        <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span id="fileNameDisplay">No file chosen</span>
+        <button class="text-danger-btn" id="btnClear">Remove</button>
+      </div>
+    </div>
+
+    <div class="manual-paste-box" id="pasteBox" style="display: none;">
+      <div class="paste-header">
+        <span>PASTE RAW TERMINAL OUTPUT</span>
+        <span id="inputStats">0 lines</span>
+      </div>
+      <textarea id="rawInput" placeholder="Paste serial output directly here (e.g. temp=24.5 hum=60)..."></textarea>
+      <div class="paste-footer">
+        <button class="secondary-btn" id="btnParse">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          Parse Text
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="results-section" id="resultsSection" style="display: none;">
+    <div class="results-header">
+      <div class="results-title-group">
+        <h3>Converted Data Preview</h3>
+        <span class="pill-count" id="outputStats">0 rows parsed</span>
+      </div>
+      <div class="export-actions">
+        <button class="primary-btn" id="btnDownloadXlsx">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="M8 13h8"/>
+            <path d="M8 17h8"/>
+            <path d="M10 9H8"/>
+          </svg>
+          Download Excel (.xlsx)
+        </button>
+        <button class="secondary-btn" id="btnDownloadCsv">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download CSV
+        </button>
+        <button class="secondary-btn" id="btnCopyTsv">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy TSV
+        </button>
+        <button class="secondary-btn" id="btnCopyJson">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          Copy JSON
+        </button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-container">
+        <table id="previewTable">
+          <thead><tr><th>Waiting for data...</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-meta">
+          <h4>Telemetry Plotter</h4>
+          <div class="metric-badges" id="metricBadges">
+            <span class="hint-text">(Select metrics to display)</span>
+          </div>
+        </div>
+        <div class="chart-btns">
+          <button class="secondary-btn sm" id="btnResetZoom">Reset Zoom</button>
+          <button class="secondary-btn sm" id="btnDownloadChart">
+            <svg class="ui-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Save Chart (PNG)
+          </button>
+        </div>
+      </div>
+      <div class="chart-box">
+        <canvas id="telemetryChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h4>100% In-Browser Privacy</h4>
+      <p>Your firmware telemetry stays on your machine. All transformations occur in client memory using Web Streams.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <h4>Instant Batch Processing</h4>
+      <p>Drop multiple logs at once. Automatically generates multi-sheet Excel workbooks with zero upload waiting time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+      </div>
+      <h4>Smart Noise Filter</h4>
+      <p>Automatically isolates sensor data by stripping boot messages, CRC checksum errors, and debug notices.</p>
+    </div>
+  </section>
+
+  <article class="seo-article">
+    <section>
+      <h2>Client-Side Telemetry Conversion & Embedded Analytics</h2>
+      <p>
+        Embedded engineers developing on <strong>ESP32, Arduino, STM32, and Raspberry Pi Pico</strong> microcontrollers require rapid transformation of serial stream dumps into analytical formats. This tool offers deterministic, air-gapped parsing of Key-Value sensor pairs and NMEA GPS sentences into <strong>RFC 4180 CSV</strong> tables and formatted Excel spreadsheets without cloud dependencies.
+      </p>
+    </section>
+
+    <section>
+      <h3>Comparison: Local Browser Converter vs Cloud Services</h3>
+      <div class="docs-table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Serial Log to Excel</th>
+              <th>Cloud File Converters</th>
+              <th>Desktop Spreadsheets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Privacy & Security</strong></td>
+              <td>100% In-Memory (Zero Network Transmission)</td>
+              <td>Transmitted to external servers</td>
+              <td>Local, but manual workflow</td>
+            </tr>
+            <tr>
+              <td><strong>Noise Cancellation</strong></td>
+              <td>Auto-filters boot sequences and CRC errors</td>
+              <td>None (converts raw noise)</td>
+              <td>Requires manual line deletion</td>
+            </tr>
+            <tr>
+              <td><strong>Batch to Multi-Sheet</strong></td>
+              <td>One-click multi-tab workbook (.xlsx)</td>
+              <td>Multiple isolated downloads</td>
+              <td>Manual multi-sheet import</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h3>Frequently Asked Questions</h3>
+      <div class="faq-item">
+        <h4>Are my proprietary sensor logs uploaded to any remote server?</h4>
+        <p>No. Parsing executes entirely inside your browser's local JavaScript V8 engine. No data is stored, tracked, or uploaded.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How does the Excel export format numbers?</h4>
+        <p>Values identified as integers or decimals are cast to native spreadsheet numbers so formulas (SUM, AVERAGE) work immediately without formatting.</p>
+      </div>
+    </section>
+  </article>
+
+  <footer class="footer">
+    <div>© 2026 Serial Log to CSV & Excel Converter. Client-side, serverless, and private.</div>
+    <div class="footer-links">
+      <a href="javascript:void(0)" onclick="openModal('privacyModal')">Privacy</a>
+      <a href="javascript:void(0)" onclick="openModal('termsModal')">Terms</a>
+    </div>
+  </footer>
+</div>
+
+<div class="modal" id="optionsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Parser Settings</h3>
+      <button class="close-btn" onclick="closeModal('optionsModal')">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="setting-item">
+        <label for="parseMode"><strong>Parsing Mode</strong></label>
+        <select id="parseMode" class="form-select">
+          <option value="auto">Auto-Detect (Heuristic)</option>
+          <option value="kv">Key-Value Pairs (temp=24.5)</option>
+          <option value="delimited">Delimited / CSV / TSV</option>
+          <option value="nmea">GPS Telemetry ($GPGGA)</option>
+        </select>
+      </div>
+
+      <div class="setting-item" id="delimSetting" style="display: none;">
+        <label for="customDelim"><strong>Custom Delimiter</strong></label>
+        <input type="text" id="customDelim" class="form-input" placeholder="e.g. , ; tab space" />
+      </div>
+
+      <div class="setting-checkbox">
+        <input type="checkbox" id="filterErrors" checked>
+        <div>
+          <strong>Filter Debug Noise & Errors</strong>
+          <p>Strips [ERR], [DEBUG], [WARN], CRC errors, and boot sequences.</p>
+        </div>
+      </div>
+
+      <div class="setting-checkbox">
+        <input type="checkbox" id="includeSourceCol" checked>
+        <div>
+          <strong>Include Source File Column in Batch Mode</strong>
+          <p>Appends the file name to each row when converting multiple logs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="primary-btn" onclick="closeModal('optionsModal'); parseLogs();">Save & Re-Parse</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="privacyModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Privacy Guarantee</h3>
+      <button class="close-btn" onclick="closeModal('privacyModal')">✕</button>
+    </div>
+    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+      All decoding, regular expression tokenization, and spreadsheet compilation processes execute locally within your browser sandbox. No telemetry payloads are transmitted to any server.
+    </p>
+  </div>
+</div>
+
+<div class="modal" id="termsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Terms of Use</h3>
+      <button class="close-btn" onclick="closeModal('termsModal')">✕</button>
+    </div>
+    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+      This utility is provided free of charge for engineering, academic, and industrial diagnostic workflows. Verify mission-critical telemetry before deployment.
+    </p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
