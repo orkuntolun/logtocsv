@@ -735,3 +735,29 @@ tr:nth-child(even) {
   display: flex;
   justify-content: flex-end;
 }
+
+.seo-article code, .feature-card code {
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  border: 1px solid #e2e8f0;
+}
+
+.card-action-link {
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-action-link:hover {
+  text-decoration: underline;
+}
