@@ -413,6 +413,100 @@
   </div>
 </div>
 
+  <!-- SEO & Technical Use Cases Section -->
+<section class="max-w-5xl mx-auto px-4 py-12 border-t border-slate-200 text-slate-700">
+  <h2 class="text-xl font-bold text-slate-900 mb-6">Supported Workflows & Hardware Logging Formats</h2>
+  
+  <div class="grid md:grid-cols-2 gap-6 mb-10 text-sm">
+    <div class="p-5 bg-white rounded-lg border border-slate-200">
+      <h3 class="font-semibold text-slate-900 mb-2">Arduino Serial Monitor to Excel (.xlsx)</h3>
+      <p class="leading-relaxed">
+        Copy raw text directly from the Arduino IDE Serial Monitor or Serial Plotter output. Automatically splits comma, tab, or space-delimited sensor readings (BME280, MPU6050, analog pins) into clean Excel spreadsheets without manual text-to-columns formatting.
+      </p>
+    </div>
+
+    <div class="p-5 bg-white rounded-lg border border-slate-200">
+      <h3 class="font-semibold text-slate-900 mb-2">ESP32 & STM32 UART Log to CSV</h3>
+      <p class="leading-relaxed">
+        Strip noisy firmware debug tags like <code class="bg-slate-100 px-1 rounded">[I][esp_timer]</code> or FreeRTOS status messages from high-baud UART dumps. Extract clean timestamped telemetry columns and inspect voltage drops or sensor drift in the browser chart.
+      </p>
+    </div>
+
+    <div class="p-5 bg-white rounded-lg border border-slate-200">
+      <h3 class="font-semibold text-slate-900 mb-2">PuTTY, Tera Term & Minicom Session Logs</h3>
+      <p class="leading-relaxed">
+        Drop raw <code class="bg-slate-100 px-1 rounded">.log</code> or <code class="bg-slate-100 px-1 rounded">.txt</code> capture files from PuTTY, CoolTerm, or Linux <code class="bg-slate-100 px-1 rounded">screen</code>/<code class="bg-slate-100 px-1 rounded">minicom</code> sessions. Handles mixed headers, empty lines, and key-value pairs (<code class="bg-slate-100 px-1 rounded">temp=24.2 hum=58.1</code>) automatically.
+      </p>
+    </div>
+
+    <div class="p-5 bg-white rounded-lg border border-slate-200">
+      <h3 class="font-semibold text-slate-900 mb-2">NMEA GPS & Industrial Telemetry Parsing</h3>
+      <p class="leading-relaxed">
+        Convert raw GPS module outputs (<code class="bg-slate-100 px-1 rounded">$GPGGA</code>, <code class="bg-slate-100 px-1 rounded">$GPRMC</code>) or CAN-bus serial bridges into structured CSV, TSV, or JSON arrays ready for Python <code class="bg-slate-100 px-1 rounded">pandas</code>, MATLAB, or QGIS import.
+      </p>
+    </div>
+  </div>
+
+  <!-- Technical FAQ -->
+  <h2 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
+  <div class="space-y-4 text-sm">
+    <details class="p-4 bg-white rounded-lg border border-slate-200" open>
+      <summary class="font-semibold text-slate-900 cursor-pointer">How do I convert Arduino Serial Monitor output to Excel or CSV?</summary>
+      <p class="mt-2 leading-relaxed">
+        Select and copy the output from your Arduino Serial Monitor (Ctrl+A, Ctrl+C), click <strong>Paste Text Directly</strong> on LogtoCSV, and download the parsed <code>.xlsx</code> or <code>.csv</code> file. No Python scripts or external drivers are required.
+      </p>
+    </details>
+
+    <details class="p-4 bg-white rounded-lg border border-slate-200">
+      <summary class="font-semibold text-slate-900 cursor-pointer">Are my proprietary firmware or hardware logs uploaded to a server?</summary>
+      <p class="mt-2 leading-relaxed">
+        No. LogtoCSV runs 100% client-side inside your browser's local memory using JavaScript. Your serial logs never leave your machine, making it safe for air-gapped environments and proprietary R&amp;D telemetry.
+      </p>
+    </details>
+
+    <details class="p-4 bg-white rounded-lg border border-slate-200">
+      <summary class="font-semibold text-slate-900 cursor-pointer">Can it parse logs with mixed debug text and sensor values?</summary>
+      <p class="mt-2 leading-relaxed">
+        Yes. The parser detects structured numeric patterns, key-value pairs, and timestamps while ignoring non-data status lines, preventing column misalignment in Excel or pandas.
+      </p>
+    </details>
+  </div>
+</section>
+
+<!-- FAQPage Structured Data for Google Rich Results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I convert Arduino Serial Monitor output to Excel or CSV?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Copy the output from your Arduino Serial Monitor, paste it directly into LogtoCSV, and export the structured data as an Excel (.xlsx) or CSV file locally in your browser."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are my proprietary firmware or hardware logs uploaded to a server?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. LogtoCSV processes all files 100% locally in browser memory via JavaScript. Zero data is transmitted to any external server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I convert PuTTY or ESP32 UART logs to CSV?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Drag and drop your PuTTY .log file or ESP32 UART terminal dump into LogtoCSV to automatically strip debug prefixes, plot sensor values, and download a clean CSV."
+      }
+    }
+  ]
+}
+</script>
+
 <script src="app.js"></script>
 </body>
 </html>
