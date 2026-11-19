@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino Serial Monitor to Excel (.xlsx) & CSV Converter | Free Online Tool</title>
+  <meta name="description" content="Export Arduino IDE Serial Monitor and Serial Plotter data directly to Excel (.xlsx) or CSV. Copy-paste raw sensor readings and generate instant graphs locally in your browser.">
+  <meta name="keywords" content="arduino serial monitor to excel, export arduino serial data to csv, arduino serial output to xlsx, arduino data logger to excel">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://logtocsv.com/arduino-serial-to-excel">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <nav class="navbar">
+    <a href="/" class="logo" style="text-decoration: none;">
+      <svg class="nav-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <strong>SerialLog</strong>Converter
+    </a>
+    <div class="nav-right">
+      <span class="badge">100% Client-Side Private</span>
+      <button class="ghost-btn" id="btnOpenOptions">Settings</button>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <h1 class="hero-title">Arduino Serial Monitor to Excel & CSV</h1>
+    <p class="hero-subtitle">Paste raw Arduino IDE Serial Monitor output or drop logged sensor files to export clean <code>.xlsx</code> spreadsheets and telemetry charts.</p>
+
+    <div class="upload-card" id="dropZone">
+      <input type="file" id="filePicker" accept=".log,.txt,.csv,.data" multiple style="display: none;">
+      <button class="primary-action-btn" id="btnSelectFiles">Select Arduino Log files</button>
+      <p class="drop-label">or drag and drop logs here</p>
+      <div class="quick-samples">
+        <span>Try sample:</span>
+        <button class="link-btn" id="btnSampleKV">Sensor Telemetry</button>
+        <span class="dot">•</span>
+        <button class="link-btn" id="btnSampleGPS">NMEA GPS</button>
+        <span class="dot">•</span>
+        <button class="link-btn" id="btnTogglePaste">Paste Serial Monitor Output</button>
+      </div>
+      <div class="file-status" id="fileStatus" style="display: none;">
+        <span id="fileNameDisplay">No file chosen</span>
+        <button class="text-danger-btn" id="btnClear">Remove</button>
+      </div>
+    </div>
+
+    <div class="manual-paste-box" id="pasteBox" style="display: none;">
+      <div class="paste-header">
+        <span>PASTE ARDUINO SERIAL MONITOR OUTPUT</span>
+        <span id="inputStats">0 lines</span>
+      </div>
+      <textarea id="rawInput" placeholder="Paste text from Arduino Serial Monitor (Ctrl+A, Ctrl+C)..."></textarea>
+      <div class="paste-footer">
+        <button class="secondary-btn" id="btnParse">Parse Output</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="results-section" id="resultsSection" style="display: none;">
+    <div class="results-header">
+      <div class="results-title-group">
+        <h3>Converted Arduino Data</h3>
+        <span class="pill-count" id="outputStats">0 rows parsed</span>
+      </div>
+      <div class="export-actions">
+        <button class="primary-btn" id="btnDownloadXlsx">Download Excel (.xlsx)</button>
+        <button class="secondary-btn" id="btnDownloadCsv">Download CSV</button>
+        <button class="secondary-btn" id="btnCopyTsv">Copy TSV</button>
+        <button class="secondary-btn" id="btnCopyJson">Copy JSON</button>
+      </div>
+    </div>
+    <div class="table-card"><div class="table-container"><table id="previewTable"><thead><tr><th>Waiting...</th></tr></thead><tbody></tbody></table></div></div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-meta"><h4>Arduino Sensor Plotter</h4><div class="metric-badges" id="metricBadges"></div></div>
+        <div class="chart-btns"><button class="secondary-btn sm" id="btnResetZoom">Reset Zoom</button><button class="secondary-btn sm" id="btnDownloadChart">Save Chart (PNG)</button></div>
+      </div>
+      <div class="chart-box"><canvas id="telemetryChart"></canvas></div>
+    </div>
+  </section>
+
+  <article class="seo-article">
+    <section>
+      <h2>How to Export Arduino Serial Monitor Data to Excel Without Python or SD Cards</h2>
+      <p>The built-in Arduino IDE Serial Monitor does not provide a native "Save to Excel" button. Instead of writing custom Python <code>pyserial</code> scripts or installing third-party Excel Data Streamer add-ins, copy your terminal output directly into this browser tool to generate native numeric <code>.xlsx</code> workbooks.</p>
+    </section>
+    <section>
+      <h3>Supported Arduino Output Patterns</h3>
+      <div class="faq-item">
+        <h4>Key-Value Format (<code>Serial.print("temp="); Serial.println(t);</code>)</h4>
+        <p>Automatically maps each key name into its own Excel column header and converts numbers into native spreadsheet values ready for formulas and charts.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Comma or Tab Separated Values (<code>24.5, 58.1, 1013.2</code>)</h4>
+        <p>Splits delimited sensor streams cleanly while stripping boot messages, setup status lines, and malformed serial frames.</p>
+      </div>
+    </section>
+  </article>
+
+  <footer class="footer">
+    <div>© 2026 Serial Log to CSV & Excel Converter.</div>
+    <div class="footer-links">
+      <a href="/">All Serial Formats</a>
+      <a href="/esp32-uart-log-to-csv">ESP32 Log to CSV</a>
+      <a href="/putty-log-to-csv">PuTTY Log to CSV</a>
+    </div>
+  </footer>
+</div>
+
+<div class="modal" id="optionsModal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>Parser Settings</h3><button class="close-btn" onclick="closeModal('optionsModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="setting-item"><label for="parseMode"><strong>Parsing Mode</strong></label><select id="parseMode" class="form-select"><option value="auto">Auto-Detect (Heuristic)</option><option value="kv">Key-Value Pairs</option><option value="delimited">Delimited / CSV / TSV</option><option value="nmea">GPS Telemetry ($GPGGA)</option></select></div>
+      <div class="setting-item" id="delimSetting" style="display: none;"><label for="customDelim"><strong>Custom Delimiter</strong></label><input type="text" id="customDelim" class="form-input" placeholder="e.g. , ; tab space" /></div>
+      <div class="setting-checkbox"><input type="checkbox" id="filterErrors" checked><div><strong>Filter Debug Noise & Errors</strong></div></div>
+      <div class="setting-checkbox"><input type="checkbox" id="includeSourceCol" checked><div><strong>Include Source File Column</strong></div></div>
+    </div>
+    <div class="modal-footer"><button class="primary-btn" onclick="closeModal('optionsModal'); parseLogs();">Save & Re-Parse</button></div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
