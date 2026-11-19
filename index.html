@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Serial Log to CSV & Excel Converter | Client-Side Embedded Data Tool</title>
-  <meta name="description" content="Convert raw Arduino, ESP32, and sensor serial logs into clean Excel spreadsheets (.xlsx), CSV files, and interactive telemetry charts. 100% private, client-side.">
-  <meta name="keywords" content="serial log to excel, arduino serial to csv, esp32 telemetry graph, putty log to csv, client side log parser, rfc 4180 csv export">
+  <meta name="description" content="Convert raw Arduino, ESP32, PuTTY, and sensor serial logs into clean Excel spreadsheets (.xlsx), CSV files, and interactive telemetry charts. 100% private, client-side.">
+  <meta name="keywords" content="serial log to excel, arduino serial monitor to excel, esp32 uart log to csv, putty log to csv, client side log parser, rfc 4180 csv export">
   <meta name="robots" content="index, follow">
 
   <link rel="canonical" href="https://logtocsv.com/">
@@ -40,8 +40,8 @@
         "step": [
           {
             "@type": "HowToStep",
-            "name": "Upload Log",
-            "text": "Select or drag and drop your .log, .txt, or CSV file into the converter."
+            "name": "Upload or Paste Log",
+            "text": "Select, drag and drop your .log, .txt, or CSV file, or paste Serial Monitor output directly."
           },
           {
             "@type": "HowToStep",
@@ -60,18 +60,34 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "Is my hardware telemetry uploaded to any cloud server?",
+            "name": "How do I convert Arduino Serial Monitor output to Excel or CSV?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. The entire decoding and conversion process runs locally in your browser memory. No data is transmitted across the internet."
+              "text": "Select and copy the output from your Arduino Serial Monitor, click Paste Text Directly on LogtoCSV, and download the parsed .xlsx or .csv file locally in your browser."
             }
           },
           {
             "@type": "Question",
-            "name": "Can I convert multiple files at once?",
+            "name": "Are my proprietary firmware or hardware logs uploaded to any cloud server?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Multiple files are parsed together and bundled into a multi-sheet Excel workbook."
+              "text": "No. The entire decoding and conversion process runs locally in your browser memory using JavaScript. Zero telemetry payloads are transmitted across the internet."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I convert PuTTY or ESP32 UART logs to CSV?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Drag and drop your PuTTY .log file or ESP32 UART terminal dump into LogtoCSV to automatically strip debug prefixes, plot sensor values, and export a clean CSV."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I convert multiple log files at once?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Multiple files are parsed together and bundled into a multi-sheet Excel workbook (.xlsx) with native numeric formatting."
             }
           }
         ]
@@ -115,7 +131,7 @@
 
   <section class="hero-section">
     <h1 class="hero-title">Serial Log to Excel & CSV</h1>
-    <p class="hero-subtitle">Convert raw Arduino, ESP32, and terminal logs into structured Excel sheets and interactive charts.</p>
+    <p class="hero-subtitle">Convert raw Arduino, ESP32, PuTTY, and terminal logs into structured Excel sheets and interactive charts.</p>
 
     <div class="upload-card" id="dropZone">
       <input type="file" id="filePicker" accept=".log,.txt,.csv,.data" multiple style="display: none;">
@@ -286,6 +302,24 @@
     </section>
 
     <section>
+      <h3>Supported Hardware Workflows & Terminal Formats</h3>
+      <div class="features-section">
+        <div class="feature-card">
+          <h4>Arduino Serial Monitor to Excel (.xlsx)</h4>
+          <p>Copy raw text directly from the Arduino IDE Serial Monitor or Serial Plotter output. Automatically splits comma, tab, or space-delimited sensor readings (BME280, MPU6050, analog pins) into clean Excel spreadsheets without manual text-to-columns formatting.</p>
+        </div>
+        <div class="feature-card">
+          <h4>ESP32 & STM32 UART Log to CSV</h4>
+          <p>Strip noisy firmware debug tags like <code>[I][esp_timer]</code> or FreeRTOS status messages from high-baud UART dumps. Extract clean timestamped telemetry columns and inspect voltage drops or sensor drift in the browser chart.</p>
+        </div>
+        <div class="feature-card">
+          <h4>PuTTY, Tera Term & Minicom Session Logs</h4>
+          <p>Drop raw <code>.log</code> or <code>.txt</code> capture files from PuTTY, CoolTerm, or Linux <code>screen</code>/<code>minicom</code> sessions. Handles mixed headers, empty lines, and key-value pairs (<code>temp=24.2 hum=58.1</code>) automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
       <h3>Comparison: Local Browser Converter vs Cloud Services</h3>
       <div class="docs-table-wrapper">
         <table class="docs-table">
@@ -323,6 +357,14 @@
 
     <section>
       <h3>Frequently Asked Questions</h3>
+      <div class="faq-item">
+        <h4>How do I convert Arduino Serial Monitor output to Excel or CSV?</h4>
+        <p>Select and copy the output from your Arduino Serial Monitor (Ctrl+A, Ctrl+C), click <strong>Paste Text Directly</strong>, and download the parsed <code>.xlsx</code> or <code>.csv</code> file. No Python scripts or external drivers are required.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How can I convert PuTTY or ESP32 UART logs to CSV?</h4>
+        <p>Drag and drop your PuTTY <code>.log</code> file or ESP32 UART terminal dump into the converter to automatically strip debug prefixes, plot sensor values, and download a clean CSV.</p>
+      </div>
       <div class="faq-item">
         <h4>Are my proprietary sensor logs uploaded to any remote server?</h4>
         <p>No. Parsing executes entirely inside your browser's local JavaScript V8 engine. No data is stored, tracked, or uploaded.</p>
@@ -412,100 +454,6 @@
     </p>
   </div>
 </div>
-
-  <!-- SEO & Technical Use Cases Section -->
-<section class="max-w-5xl mx-auto px-4 py-12 border-t border-slate-200 text-slate-700">
-  <h2 class="text-xl font-bold text-slate-900 mb-6">Supported Workflows & Hardware Logging Formats</h2>
-  
-  <div class="grid md:grid-cols-2 gap-6 mb-10 text-sm">
-    <div class="p-5 bg-white rounded-lg border border-slate-200">
-      <h3 class="font-semibold text-slate-900 mb-2">Arduino Serial Monitor to Excel (.xlsx)</h3>
-      <p class="leading-relaxed">
-        Copy raw text directly from the Arduino IDE Serial Monitor or Serial Plotter output. Automatically splits comma, tab, or space-delimited sensor readings (BME280, MPU6050, analog pins) into clean Excel spreadsheets without manual text-to-columns formatting.
-      </p>
-    </div>
-
-    <div class="p-5 bg-white rounded-lg border border-slate-200">
-      <h3 class="font-semibold text-slate-900 mb-2">ESP32 & STM32 UART Log to CSV</h3>
-      <p class="leading-relaxed">
-        Strip noisy firmware debug tags like <code class="bg-slate-100 px-1 rounded">[I][esp_timer]</code> or FreeRTOS status messages from high-baud UART dumps. Extract clean timestamped telemetry columns and inspect voltage drops or sensor drift in the browser chart.
-      </p>
-    </div>
-
-    <div class="p-5 bg-white rounded-lg border border-slate-200">
-      <h3 class="font-semibold text-slate-900 mb-2">PuTTY, Tera Term & Minicom Session Logs</h3>
-      <p class="leading-relaxed">
-        Drop raw <code class="bg-slate-100 px-1 rounded">.log</code> or <code class="bg-slate-100 px-1 rounded">.txt</code> capture files from PuTTY, CoolTerm, or Linux <code class="bg-slate-100 px-1 rounded">screen</code>/<code class="bg-slate-100 px-1 rounded">minicom</code> sessions. Handles mixed headers, empty lines, and key-value pairs (<code class="bg-slate-100 px-1 rounded">temp=24.2 hum=58.1</code>) automatically.
-      </p>
-    </div>
-
-    <div class="p-5 bg-white rounded-lg border border-slate-200">
-      <h3 class="font-semibold text-slate-900 mb-2">NMEA GPS & Industrial Telemetry Parsing</h3>
-      <p class="leading-relaxed">
-        Convert raw GPS module outputs (<code class="bg-slate-100 px-1 rounded">$GPGGA</code>, <code class="bg-slate-100 px-1 rounded">$GPRMC</code>) or CAN-bus serial bridges into structured CSV, TSV, or JSON arrays ready for Python <code class="bg-slate-100 px-1 rounded">pandas</code>, MATLAB, or QGIS import.
-      </p>
-    </div>
-  </div>
-
-  <!-- Technical FAQ -->
-  <h2 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
-  <div class="space-y-4 text-sm">
-    <details class="p-4 bg-white rounded-lg border border-slate-200" open>
-      <summary class="font-semibold text-slate-900 cursor-pointer">How do I convert Arduino Serial Monitor output to Excel or CSV?</summary>
-      <p class="mt-2 leading-relaxed">
-        Select and copy the output from your Arduino Serial Monitor (Ctrl+A, Ctrl+C), click <strong>Paste Text Directly</strong> on LogtoCSV, and download the parsed <code>.xlsx</code> or <code>.csv</code> file. No Python scripts or external drivers are required.
-      </p>
-    </details>
-
-    <details class="p-4 bg-white rounded-lg border border-slate-200">
-      <summary class="font-semibold text-slate-900 cursor-pointer">Are my proprietary firmware or hardware logs uploaded to a server?</summary>
-      <p class="mt-2 leading-relaxed">
-        No. LogtoCSV runs 100% client-side inside your browser's local memory using JavaScript. Your serial logs never leave your machine, making it safe for air-gapped environments and proprietary R&amp;D telemetry.
-      </p>
-    </details>
-
-    <details class="p-4 bg-white rounded-lg border border-slate-200">
-      <summary class="font-semibold text-slate-900 cursor-pointer">Can it parse logs with mixed debug text and sensor values?</summary>
-      <p class="mt-2 leading-relaxed">
-        Yes. The parser detects structured numeric patterns, key-value pairs, and timestamps while ignoring non-data status lines, preventing column misalignment in Excel or pandas.
-      </p>
-    </details>
-  </div>
-</section>
-
-<!-- FAQPage Structured Data for Google Rich Results -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How do I convert Arduino Serial Monitor output to Excel or CSV?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Copy the output from your Arduino Serial Monitor, paste it directly into LogtoCSV, and export the structured data as an Excel (.xlsx) or CSV file locally in your browser."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Are my proprietary firmware or hardware logs uploaded to a server?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. LogtoCSV processes all files 100% locally in browser memory via JavaScript. Zero data is transmitted to any external server."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How can I convert PuTTY or ESP32 UART logs to CSV?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Drag and drop your PuTTY .log file or ESP32 UART terminal dump into LogtoCSV to automatically strip debug prefixes, plot sensor values, and download a clean CSV."
-      }
-    }
-  ]
-}
-</script>
 
 <script src="app.js"></script>
 </body>
