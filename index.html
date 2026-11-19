@@ -34,28 +34,6 @@
         "description": "Fast, private client-side converter transforming serial terminal logs into Excel sheets and charts."
       },
       {
-        "@type": "HowTo",
-        "name": "How to Convert Serial Logs to Excel Online",
-        "description": "Step-by-step guide to extract structured sensor telemetry from serial terminal dumps.",
-        "step": [
-          {
-            "@type": "HowToStep",
-            "name": "Upload or Paste Log",
-            "text": "Select, drag and drop your .log, .txt, or CSV file, or paste Serial Monitor output directly."
-          },
-          {
-            "@type": "HowToStep",
-            "name": "Automatic Processing",
-            "text": "The client-side engine strips debug noise and extracts telemetry columns instantly."
-          },
-          {
-            "@type": "HowToStep",
-            "name": "Download Excel or CSV",
-            "text": "Click Download Excel (.xlsx) or Download CSV to save your structured dataset."
-          }
-        ]
-      },
-      {
         "@type": "FAQPage",
         "mainEntity": [
           {
@@ -105,12 +83,12 @@
 
 <div class="container">
   <nav class="navbar">
-    <div class="logo">
+    <a href="/" class="logo" style="text-decoration: none;">
       <svg class="nav-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
       </svg>
       <strong>SerialLog</strong>Converter
-    </div>
+    </a>
     <div class="nav-right">
       <span class="badge">
         <svg class="ui-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -135,7 +113,6 @@
 
     <div class="upload-card" id="dropZone">
       <input type="file" id="filePicker" accept=".log,.txt,.csv,.data" multiple style="display: none;">
-      
       <button class="primary-action-btn" id="btnSelectFiles">
         <svg class="ui-icon lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -144,9 +121,7 @@
         </svg>
         Select Serial Log files
       </button>
-
       <p class="drop-label">or drag and drop logs here</p>
-
       <div class="quick-samples">
         <span>Try sample:</span>
         <button class="link-btn" id="btnSampleKV">ESP32 Telemetry</button>
@@ -155,7 +130,6 @@
         <span class="dot">•</span>
         <button class="link-btn" id="btnTogglePaste">Paste Text Directly</button>
       </div>
-
       <div class="file-status" id="fileStatus" style="display: none;">
         <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -307,14 +281,17 @@
         <div class="feature-card">
           <h4>Arduino Serial Monitor to Excel (.xlsx)</h4>
           <p>Copy raw text directly from the Arduino IDE Serial Monitor or Serial Plotter output. Automatically splits comma, tab, or space-delimited sensor readings (BME280, MPU6050, analog pins) into clean Excel spreadsheets without manual text-to-columns formatting.</p>
+          <a href="/arduino-serial-to-excel" class="card-action-link">Arduino Serial to Excel Tool →</a>
         </div>
         <div class="feature-card">
           <h4>ESP32 & STM32 UART Log to CSV</h4>
           <p>Strip noisy firmware debug tags like <code>[I][esp_timer]</code> or FreeRTOS status messages from high-baud UART dumps. Extract clean timestamped telemetry columns and inspect voltage drops or sensor drift in the browser chart.</p>
+          <a href="/esp32-uart-log-to-csv" class="card-action-link">ESP32 UART Log Parser →</a>
         </div>
         <div class="feature-card">
           <h4>PuTTY, Tera Term & Minicom Session Logs</h4>
           <p>Drop raw <code>.log</code> or <code>.txt</code> capture files from PuTTY, CoolTerm, or Linux <code>screen</code>/<code>minicom</code> sessions. Handles mixed headers, empty lines, and key-value pairs (<code>temp=24.2 hum=58.1</code>) automatically.</p>
+          <a href="/putty-log-to-csv" class="card-action-link">PuTTY Log to CSV Converter →</a>
         </div>
       </div>
     </section>
@@ -379,6 +356,9 @@
   <footer class="footer">
     <div>© 2026 Serial Log to CSV & Excel Converter. Client-side, serverless, and private.</div>
     <div class="footer-links">
+      <a href="/arduino-serial-to-excel">Arduino to Excel</a>
+      <a href="/esp32-uart-log-to-csv">ESP32 Log to CSV</a>
+      <a href="/putty-log-to-csv">PuTTY Log to CSV</a>
       <a href="javascript:void(0)" onclick="openModal('privacyModal')">Privacy</a>
       <a href="javascript:void(0)" onclick="openModal('termsModal')">Terms</a>
     </div>
@@ -391,7 +371,6 @@
       <h3>Parser Settings</h3>
       <button class="close-btn" onclick="closeModal('optionsModal')">✕</button>
     </div>
-    
     <div class="modal-body">
       <div class="setting-item">
         <label for="parseMode"><strong>Parsing Mode</strong></label>
@@ -402,12 +381,10 @@
           <option value="nmea">GPS Telemetry ($GPGGA)</option>
         </select>
       </div>
-
       <div class="setting-item" id="delimSetting" style="display: none;">
         <label for="customDelim"><strong>Custom Delimiter</strong></label>
         <input type="text" id="customDelim" class="form-input" placeholder="e.g. , ; tab space" />
       </div>
-
       <div class="setting-checkbox">
         <input type="checkbox" id="filterErrors" checked>
         <div>
@@ -415,7 +392,6 @@
           <p>Strips [ERR], [DEBUG], [WARN], CRC errors, and boot sequences.</p>
         </div>
       </div>
-
       <div class="setting-checkbox">
         <input type="checkbox" id="includeSourceCol" checked>
         <div>
@@ -424,7 +400,6 @@
         </div>
       </div>
     </div>
-
     <div class="modal-footer">
       <button class="primary-btn" onclick="closeModal('optionsModal'); parseLogs();">Save & Re-Parse</button>
     </div>
